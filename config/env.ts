@@ -10,5 +10,9 @@ export const config = {
             secret: process.env.JWT_SECRET!,
             expiresIn: process.env.JWT_EXPIRES_IN!,
         },
+        arcjet: {
+            secret: process.env.ARCJET_KEY!,
+            env: process.env.ARCJET_ENV!,
+        },
     },
 };
