@@ -1,19 +1,12 @@
 import { Router } from "express";
+import { getAllUsers, getUserById } from "../controllers/users-controller.ts";
+import { authorize } from "../middlewares/authorization.ts";
 
 const usersRouter = Router();
 
-usersRouter.get("/", (_req, res) => {
-    res.status(200).json({
-        title: "User List",
-    });
-});
+usersRouter.get("/", getAllUsers);
 
-usersRouter.get("/:id", (req, res) => {
-    res.status(200).json({
-        title: "User Details",
-        id: req.params.id,
-    });
-});
+usersRouter.get("/:id", authorize, getUserById);
 
 usersRouter.post("/", (_req, res) => {
     res.status(200).json({

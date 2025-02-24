@@ -5,7 +5,11 @@ meta {
 }
 
 get {
-  url: {{api}}/users/1
+  url: {{api}}/users/{{userId}}
   body: none
-  auth: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2JjMjEwODkyYzA4YzE3NTRmNmZiZWEiLCJpYXQiOjE3NDA0MTM4NzEsImV4cCI6MTc0MDUwMDI3MX0.rPRtbHYljZj6Tj90bhCoAxORCLU8kXfp0WDhozDNGo0
 }
