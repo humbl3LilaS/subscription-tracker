@@ -10,6 +10,7 @@ export const SUBSCRIPTION_CATEGORY = [
     "technology",
     "finance",
     "politics",
+    "education",
     "others",
 ] as const;
 

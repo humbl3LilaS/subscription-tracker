@@ -1,4 +1,9 @@
 import { Router } from "express";
+import { authorize } from "../middlewares/authorization.ts";
+import {
+    createSubscription,
+    getUserSubscription,
+} from "../controllers/subscriptions-controller.ts";
 
 const subscriptionsRouter = Router();
 
@@ -21,11 +26,7 @@ subscriptionsRouter.get("/:id", (req, res) => {
     });
 });
 
-subscriptionsRouter.post("/", (_req, res) => {
-    res.status(200).json({
-        title: "Subscription Create",
-    });
-});
+subscriptionsRouter.post("/", authorize, createSubscription);
 
 subscriptionsRouter.put("/:id", (req, res) => {
     res.status(200).json({
@@ -40,12 +41,7 @@ subscriptionsRouter.delete("/:id", (req, res) => {
         id: req.params.id,
     });
 });
-subscriptionsRouter.get("/users/:userId", (req, res) => {
-    res.status(200).json({
-        title: "Subscription List By User Id",
-        userId: req.params.userId,
-    });
-});
+subscriptionsRouter.get("/users/:userId", authorize, getUserSubscription);
 
 subscriptionsRouter.put("/:id/cancel", (req, res) => {
     res.status(200).json({
