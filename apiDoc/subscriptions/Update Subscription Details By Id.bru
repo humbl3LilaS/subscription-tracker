@@ -5,7 +5,17 @@ meta {
 }
 
 put {
-  url: {{api}}/subscriptions/1
-  body: none
-  auth: none
+  url: {{api}}/subscriptions/67bdf011ae9e4c90619f2990
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2JjMjEwODkyYzA4YzE3NTRmNmZiZWEiLCJpYXQiOjE3NDA1MDAwNDQsImV4cCI6MTc0MDU4NjQ0NH0.hlH0R_tIuzCr2c9zBKzXhkg0MeDuOMneIAdTukPKCwA
+}
+
+body:json {
+  {
+    "price": 29.99
+  }
 }

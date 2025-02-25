@@ -1,6 +1,9 @@
 import type { ExpressController } from "../types/controller.types.ts";
 import { Subscription } from "../models/subscription.ts";
-import { createSubscriptionReqBody } from "../validation/subscriptions.ts";
+import {
+    createSubscriptionReqBody,
+    updateSubscriptionReqBody,
+} from "../validation/subscriptions.ts";
 
 export const createSubscription: ExpressController = async (req, res, next) => {
     try {
@@ -38,7 +41,7 @@ export const createSubscription: ExpressController = async (req, res, next) => {
     }
 };
 
-export const getUserSubscription: ExpressController = async (req, res, next) => {
+export const getSubscriptions: ExpressController = async (req, res, next) => {
     try {
         // validate if the user id is present
         if (!req.user || !req.user._id) {
@@ -49,22 +52,91 @@ export const getUserSubscription: ExpressController = async (req, res, next) => 
             return;
         }
         const userId = req.user._id.toString();
-        const id = req.params.userId;
 
-        // check if the requested userId is the same as the userId in the jwt token
-        if (id !== userId) {
-            res.status(401).send({
-                success: false,
-                message: "Denied access to User Data",
-            });
-            return;
-        }
-
-        const subscriptions = await Subscription.find({ user: req.params.userId });
+        const subscriptions = await Subscription.find({ user: userId });
 
         res.status(200).json({
             success: true,
             data: subscriptions,
+        });
+    } catch (e) {
+        next(e);
+    }
+};
+
+export const getSubscriptionById: ExpressController = async (req, res, next) => {
+    try {
+        // validate if the user id is present
+        if (!req.user || !req.user._id) {
+            res.status(401).send({
+                success: false,
+                message: "Unauthorized Request",
+            });
+            return;
+        }
+        const userId = req.user._id.toString();
+        const subscriptionId = req.params.id;
+
+        const subscription = await Subscription.findOne({ user: userId, _id: subscriptionId });
+
+        if (!subscription) {
+            res.status(404).send({
+                success: false,
+                message: "Subscription not found",
+            });
+            return;
+        }
+
+        res.status(200).json({
+            success: true,
+            data: subscription,
+        });
+    } catch (e) {
+        next(e);
+    }
+};
+
+export const updateSubscription: ExpressController = async (req, res, next) => {
+    try {
+        const body = req.body;
+        const validatedBody = updateSubscriptionReqBody.safeParse(body);
+
+        if (!validatedBody.success) {
+            res.status(401).send({
+                success: false,
+                message: "Bad Request",
+            });
+            return;
+        }
+
+        const { data } = validatedBody;
+
+        // validate if the user id is present
+        if (!req.user || !req.user._id) {
+            res.status(401).send({
+                success: false,
+                message: "Unauthorized Request",
+            });
+            return;
+        }
+        const userId = req.user._id.toString();
+        const subscriptionId = req.params.id;
+
+        const subscription = await Subscription.findOneAndUpdate(
+            { user: userId, _id: subscriptionId },
+            { ...data },
+        );
+
+        if (!subscription) {
+            res.status(404).send({
+                success: false,
+                message: "Subscription not found",
+            });
+            return;
+        }
+
+        res.status(200).json({
+            success: true,
         });
     } catch (e) {
         next(e);

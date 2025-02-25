@@ -16,3 +16,5 @@ export const createSubscriptionReqBody = z.object({
     startDate: z.string(),
     renewalDate: z.string().optional(),
 });
+
+export const updateSubscriptionReqBody = createSubscriptionReqBody.partial();
