@@ -1,25 +1,12 @@
 import { Router } from "express";
-import { getAllUsers, getUserById } from "../controllers/users-controller.ts";
+import { getUserById, updateUser } from "../controllers/users-controller.ts";
 import { authorize } from "../middlewares/authorization.ts";
 
 const usersRouter = Router();
 
-usersRouter.get("/", getAllUsers);
-
 usersRouter.get("/:id", authorize, getUserById);
 
-usersRouter.post("/", (_req, res) => {
-    res.status(200).json({
-        title: "User Create",
-    });
-});
-
-usersRouter.put("/:id", (req, res) => {
-    res.status(200).json({
-        title: "Update User Details",
-        id: req.params.id,
-    });
-});
+usersRouter.put("/:id", authorize, updateUser);
 
 usersRouter.delete("/:id", (req, res) => {
     res.status(200).json({
