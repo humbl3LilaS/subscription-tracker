@@ -96,6 +96,30 @@ export const getSubscriptionById: ExpressController = async (req, res, next) => 
     }
 };
 
+export const getUpcomingSubscription: ExpressController = async (req, res, next) => {
+    try {
+        // validate if the user id is present
+        if (!req.user || !req.user._id) {
+            res.status(401).send({
+                success: false,
+                message: "Unauthorized Request",
+            });
+            return;
+        }
+        const upComingSubscription = await Subscription.find({
+            user: req.user._id,
+            renewalDate: { $gte: new Date() },
+            status: "active",
+        });
+        res.status(200).json({
+            success: true,
+            data: upComingSubscription,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const updateSubscription: ExpressController = async (req, res, next) => {
     try {
         const body = req.body;
@@ -137,8 +161,64 @@ export const updateSubscription: ExpressController = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
+            data: subscription,
         });
     } catch (e) {
         next(e);
+    }
+};
+
+export const cancelSubscription: ExpressController = async (req, res, next) => {
+    try {
+        // validate if the user id is present
+        if (!req.user || !req.user._id) {
+            res.status(401).send({
+                success: false,
+                message: "Unauthorized Request",
+            });
+            return;
+        }
+
+        const subscriptionId = req.params.id;
+
+        const updatedSubscription = await Subscription.findOneAndUpdate(
+            {
+                user: req.user._id,
+                _id: subscriptionId,
+            },
+            { status: "cancelled" },
+        );
+
+        res.status(200).json({
+            success: true,
+            data: updatedSubscription,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const deleteSubscription: ExpressController = async (req, res, next) => {
+    try {
+        if (!req.user || !req.user._id) {
+            res.status(401).send({
+                success: false,
+                message: "Unauthorized Request",
+            });
+            return;
+        }
+        const subscriptionId = req.params.id;
+
+        const deletedSubscription = await Subscription.findOneAndDelete({
+            user: req.user._id,
+            _id: subscriptionId,
+        });
+
+        res.status(200).json({
+            success: true,
+            data: deletedSubscription,
+        });
+    } catch (error) {
+        next(error);
     }
 };
